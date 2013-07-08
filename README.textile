@@ -1,0 +1,45 @@
+h1. jQuery SymfonyCollection
+
+h2. Introduction
+
+We’ve had the need for a clean jQuery Plugin to "handle the collection form type":http://symfony.com/doc/current/reference/forms/types/collection.html#adding-and-removing-items of "Symfony":http://symfony.com/.
+
+The "suggested implementation in the cookbook":http://symfony.com/doc/current/cookbook/form/form_collections.html has matured, but it needs to be reimplemented for every new collection. Nested collections using a "protype-name":http://symfony.com/doc/current/reference/forms/types/collection.html#prototype-name face the same problem.
+
+
+h3. Features
+
+* No more coding needed (unless you want to add fancy stuff)
+* Nested collections
+
+h3. Installation
+
+For now, you have to put the script file into your resources and make sure it gets included after jquery.
+
+
+h2. Usage
+
+* $().SymfonyCollection(options)
+** options
+** $.fn.SymfonyCollection.defaults
+* $().SymfonyCollection('add', beforeElem/index)
+* $().SymfonyCollection('remove', elem/index/btn)
+
+h3. Events
+
+* onitemadd
+* onitemremove
+
+* Event.item
+* Event.index
+* this
+* Event.preventDefault()
+
+h3. Advanced
+
+* $.fn.SymfonyCollection.handlers
+** match(elem)
+** initCollection()
+** initRow()
+** add()
+** remove()
