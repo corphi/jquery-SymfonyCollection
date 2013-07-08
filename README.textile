@@ -6,15 +6,19 @@ We’ve had the need for a clean jQuery Plugin to "handle the collection form ty
 
 The "suggested implementation in the cookbook":http://symfony.com/doc/current/cookbook/form/form_collections.html has matured, but it needs to be reimplemented for every new collection. Nested collections using a "protype-name":http://symfony.com/doc/current/reference/forms/types/collection.html#prototype-name face the same problem.
 
+There are a "smaller":https://github.com/theodorDiaconu/jquery-symfony2-collection "implementations":https://github.com/carlalexander/symfony-collection.js out on github, but they lack features, that can’t be easily added. This is about the fourth rewrite of a collection handling script using jQuery.
+
 
 h3. Features
 
-* No more coding needed (unless you want to add fancy stuff)
-* Nested collections
+* Use events fired when items get added or removed
+* Handle collections in @<ul>@, @<table>@ and @<tbody>@
+* Add your own implementations for collection handling
+
 
 h3. Installation
 
-For now, you have to put the script file into your resources and make sure it gets included after jquery.
+For now, you have to put the script file into your resources and make sure it gets included after jQuery.
 
 
 h2. Usage

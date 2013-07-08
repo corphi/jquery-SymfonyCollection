@@ -42,52 +42,57 @@ function($) {
 		}
 	};
 
-	var wrapper = {
-		add: {
-			/**
-			 * @param {string} html
-			 * @returns {jQuery}
-			 */
-			ul: function(html) {
-				return $('<li></li>').append(html);
-			},
-			/**
-			 * @param {string} html
-			 * @returns {jQuery}
-			 */
-			table: function(html) {
-				return $('<tfoot></tfoot>').append(html).wrapInner('<tr><td colspan="0"></td></tr>');
-			},
-			/**
-			 * @param {string} html
-			 * @returns {jQuery}
-			 */
-			tbody: function(html) {
-				return $('<tr></tr>').append(html).wrapInner('<td colspan="0"></td>');
-			}
-		},
+	/**
+	 * @constructor
+	 * @this {CollectionHandler}
+	 * @extends {Object}
+	 */
+	var CollectionHandler = function(options) {
+		this.options = options;
+	};
+	/**
+	 * @param {Element} elem
+	 * @return {boolean}
+	 */
+	CollectionHandler.protoype.match = function(elem) {
+		return true;
+	};
+	/**
+	 * @this {CollectionHandler}
+	 * @param {Element} collection
+	 */
+	CollectionHandler.prototype.initCollection = function(collection) {
+		$(collection)
+			.append(this.options.buttons.add);
+	};
+	/**
+	 * @this {CollectionHandler}
+	 * @param {Element} item
+	 */
+	CollectionHandler.prototype.initItem = function(item) {
+		$(item)
+			.addClass('collection-item')
+			.append(this.options.buttons.remove);
+	};
+	/**
+	 * @this {CollectionHandler}
+	 * @param {Element} collection
+	 * @param {jQuery} item
+	 */
+	CollectionHandler.prototype.add = function(collection, item) {
+		$(collection)
+			.children().last()
+				.insertBefore(newItem);
+	};
+	/**
+	 * @this {CollectionHandler}
+	 * @param {jQuery} item
+	 */
+	CollectionHandler.prototype.remove = function(item) {
+		$(item).remove();
 	};
 
-	var CollectionHandler = SymfonyCollection.CollectionHandler = function() {
-		
-	};
-	CollectionHandler.match = function(elem) {
-		return false;
-	};
-	$.fn.SymfonyCollection.CollectionHandler.initCollection = function() {
-		
-	};
-	$.fn.SymfonyCollection.CollectionHandler.initRow = function() {
-		
-	};
-	$.fn.SymfonyCollection.CollectionHandler.add = function() {
-		
-	};
-	$.fn.SymfonyCollection.CollectionHandler.remove = function() {
-		
-	};
-
-	var handlers = $.fn.SymfonyCollection.handlers = new Array();
+	var handlers = new Array();
 	/**
 	 * Browse the handlers for one that fits the given element.
 	 * @this {Array}
@@ -104,38 +109,101 @@ function($) {
 	};
 
 	(function() {
-		var tableHandler = new CollectionHandler();
-		handlers.push(tableHandler);
+		/**
+		 * @constructor
+		 * @extends {CollecionHandler}
+		 * @this {TableHandler}
+		 */
+		var TableHandler = function(options) {
+			CollectionHandler.apply(this, arguments);
+		};
+		TableHandler.prototype = Object.create(CollectionHandler.prototype);
+		/**
+		 * @override
+		 * @this {TableHandler}
+		 * @param {Element} collection
+		 * @returns {jQuery}
+		 */
+		TableHandler.prototype.initCollection = function(collection) {
+			return CollectionHandler.prototype.initCollection.apply(this, arguments)
+				.children().last() // The new button
+					.wrap('<tfoot><tr><td colspan="0"></td></tr></tfoot>').closest('tfoot');
+		};
 
-		var tbodyHandler = new CollectionHandler();
-		handlers.push(tbodyHandler);
+		/**
+		 * @constructor
+		 * @extends {CollectionHandler}
+		 * @this {TBodyHandler}
+		 */
+		var TBodyHandler = function(options) {
+			CollectionHandler.apply(this, arguments);
+		};
+		TBodyHandler.prototype = Object.create(CollectionHandler.prototype);
+		/**
+		 * @override
+		 * @this {TableHandler}
+		 * @param {Element} collection
+		 * @returns {jQuery}
+		 */
+		TBodyHandler.prototype.initCollection = function(collection) {
+			return CollectionHandler.prototype.initCollection.apply(this, arguments)
+				.children().last() // The new button
+					.wrap('<tr><td colspan="0"></td></tr>').closest('tr');
+		};
 
-		var ulHandler = new CollectionHandler();
-		handlers.push(ulHandler);
+		/**
+		 * @constructor
+		 * @extends {CollectionHandler}
+		 * @this {UlHandler}
+		 */
+		var UlHandler = function(options) {
+			CollectionHandler.apply(this, arguments);
+		};
+		UlHandler.prototype = Object.create(CollectionHandler.prototype);
+		/**
+		 * @override
+		 * @this {UlHandler}
+		 * @param {Element} collection
+		 */
+		UlHandler.prototype.initCollection = function(collection) {
+			return CollectionHandler.prototype.initCollection.apply(this, arguments)
+				.children().last() // The new button
+					.wrap('<li></li>').parent();
+		};
 	})(handlers, CollectionHandler);
 
 
 	var methods = {
 		/**
 		 * @this {Element}
-		 * @param options
+		 * @param {Object} options
 		 */
 		init: function(options) {
-			handlers.findFor(this);
+			$(this).addClass('collection');
+			var handler = handlers.findFor(this);
+			for (var child in this.children) {
+				handler.initItem(child);
+			}
+			handler.initCollection(this);
+			
 		},
 		/**
 		 * @this {Element}
 		 * @param where
 		 */
 		add: function(where) {
-			
+			if (typeof where === 'integer') {
+				
+			}
 		},
 		/**
 		 * @this {Element}
 		 * @param where
 		 */
 		remove: function(where) {
-			
+			if (typeof where === 'integer') {
+				
+			}
 		}
 	};
 
@@ -147,7 +215,7 @@ function($) {
 	var SymfonyCollection = function(options) {
 		var method, args;
 		if (typeof options === 'string') {
-			method = methods[options] || $.K();
+			method = methods[options] || $.noop();
 			args = [].slice.call(arguments, 1);
 		} else {
 			method = methods.init;
@@ -167,10 +235,13 @@ function($) {
 
 	SymfonyCollection.defaults = {
 		buttons: {
-			add:    '<button class="btn btn-success collection-add" title="" type="button"><i class="icon-plus icon-white"></i> Hinzufügen</button>',
-			remove: '<button class="btn btn-danger collection-remove" title="" type="button"><i class="icon-minus icon-white"></i> Entfernen</button>'
+			add:    '<button class="btn btn-success collection-add" title="Add" type="button"><i class="icon-plus icon-white"></i></button>',
+			remove: '<button class="btn btn-danger collection-remove" title="Remove" type="button"><i class="icon-minus icon-white"></i></button>'
 		},
 	};
+
+	SymfonyCollection.handlers = handlers;
+	SymfonyCollection.CollectionHandler = CollectionHandler;
 
 	$(document)
 		.on('click.SymfonyCollection', '.collection .collection-add',    events.clickAdd)
