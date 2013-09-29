@@ -120,7 +120,7 @@ function($) {
 		var TableHandler = function(options) {
 			CollectionHandler.apply(this, arguments);
 		};
-		$.extend(TableHandler.prototype, CollectionHandler.prototype);
+		TableHandler.prototype = Object.create(CollectionHandler.prototype);
 		/**
 		 * @override
 		 * @this {TableHandler}
@@ -161,7 +161,7 @@ function($) {
 		var TBodyHandler = function(options) {
 			CollectionHandler.apply(this, arguments);
 		};
-		$.extend(TBodyHandler.prototype, CollectionHandler.prototype);
+		TBodyHandler.prototype = Object.create(CollectionHandler.prototype);
 		/**
 		 * @override
 		 * @this {TableHandler}
@@ -194,7 +194,7 @@ function($) {
 		var UlHandler = function(options) {
 			CollectionHandler.apply(this, arguments);
 		};
-		$.extend(UlHandler.prototype, CollectionHandler.prototype);
+		UlHandler.prototype = Object.create(CollectionHandler.prototype);
 		/**
 		 * @override
 		 * @this {UlHandler}
@@ -205,7 +205,7 @@ function($) {
 				.children().last() // The new button
 					.wrap('<li></li>').parent();
 		};
-	})(handlers, CollectionHandler);
+	});
 
 
 	var methods = {
